@@ -1,26 +1,20 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id(Config.ApplyPlugins.ANDROID_LIBRARY)
+    kotlin(Config.ApplyPlugins.Kotlin.ANDROID)
+    id(Config.ApplyPlugins.MAVEN_PUBLISH)
 }
-
-BuildInfoManager.initialize(
-    BuildInfoInput(
-        appVersion = AppVersion(major = 0, minor = 1, patch = 0, hotfix = 0, showEmptyPatchNumberInVersionName = true), // TODO: TEMPLATE - Replace with appropriate app version
-        brandName = "BR_LaunchPad_Compose", // TODO: TEMPLATE - Replace with appropriate project brand name
-        productionReleaseVariantName = "productionRelease",
-        rootProjectDir = rootDir
-    )
-)
-
 
 android {
     compileSdk = Config.AndroidSdkVersions.COMPILE_SDK
     buildToolsVersion = Config.AndroidSdkVersions.BUILD_TOOLS
+    namespace = "com.bottlerocketstudios.launchpad.compose"
 
     defaultConfig {
         minSdk = Config.AndroidSdkVersions.MIN_SDK
         targetSdk = Config.AndroidSdkVersions.TARGET_SDK
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        aarMetadata {
+            minCompileSdk = Config.AndroidSdkVersions.MIN_COMPILE_SDK
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -46,16 +40,23 @@ android {
 
 
 dependencies {
-
-    // Kotlin/coroutines
     kotlinDependencies()
     coroutineDependencies()
-
-
-    // AndroidX
     composeDependencies()
+}
 
-//    testImplementation 'junit:junit:4.13.2'
-//    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            create<MavenPublication>("release") {
+                // Applies the component for the release build variant.
+                from(components["release"])
+
+                groupId = "com.github.BottleRocketStudios"
+                artifactId = "Android-LaunchPad-Compose"
+                version = "0.1.0"
+            }
+        }
+    }
 }

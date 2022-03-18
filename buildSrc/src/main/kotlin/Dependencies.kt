@@ -86,11 +86,13 @@ object Config {
             // Android DataBinding still requires kapt and will not migrate to use ksp: https://twitter.com/yigitboyar/status/1447408905240264704
             const val KAPT = "kapt"
         }
+        const val MAVEN_PUBLISH = "maven-publish"
     }
 
     // What each version represents - https://medium.com/androiddevelopers/picking-your-compilesdkversion-minsdkversion-targetsdkversion-a098a0341ebd
     object AndroidSdkVersions {
         const val COMPILE_SDK = 31
+        const val MIN_COMPILE_SDK = 29
 
         // https://developer.android.com/studio/releases/build-tools
         const val BUILD_TOOLS = "31.0.0"
