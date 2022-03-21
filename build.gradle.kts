@@ -11,4 +11,13 @@ buildscript {
 }
 
 plugins {
+    id(Config.ApplyPlugins.KT_LINT) version Config.KTLINT_GRADLE_VERSION
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = "https://jitpack.io")
+    }
 }
