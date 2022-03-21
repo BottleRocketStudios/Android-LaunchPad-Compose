@@ -9,3 +9,6 @@ buildscript {
         classpath(Config.BuildScriptPlugins.KOTLIN_GRADLE)
     }
 }
+
+plugins {
+}
