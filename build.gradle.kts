@@ -12,6 +12,7 @@ buildscript {
 
 plugins {
     id(Config.ApplyPlugins.KT_LINT) version Config.KTLINT_GRADLE_VERSION
+    id(Config.ApplyPlugins.MAVEN_PUBLISH)
 }
 
 allprojects {
