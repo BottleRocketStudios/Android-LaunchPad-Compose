@@ -42,6 +42,7 @@ dependencies {
     kotlinDependencies()
     coroutineDependencies()
     composeDependencies()
+    accompanistDependencies()
 }
 
 afterEvaluate {
