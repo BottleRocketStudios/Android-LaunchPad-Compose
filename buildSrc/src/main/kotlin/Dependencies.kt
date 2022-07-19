@@ -1,6 +1,4 @@
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import java.util.Locale
 
 // Provides dependencies that can be used throughout the project build.gradle files
 
@@ -10,7 +8,7 @@ import java.util.Locale
 // https://kotlinlang.org/docs/reference/whatsnew15.html
 // https://kotlinlang.org/docs/releases.html#release-details
 // TODO: Update corresponding buildSrc/build.gradle.kts value when updating this version!
-private const val KOTLIN_VERSION = "1.6.10"
+private const val KOTLIN_VERSION = "1.7.0"
 private const val KOTLIN_COROUTINES_VERSION = "1.6.0"
 private const val NAVIGATION_VERSION = "2.3.5"
 
@@ -66,8 +64,8 @@ object Config {
     }
 
     object Compose {
-        const val COMPOSE_VERSION = "1.1.0"
-        const val COMPOSE_COMPILER_VERSION = "1.1.0"
+        const val COMPOSE_VERSION = "1.2.0-rc03"
+        const val COMPOSE_COMPILER_VERSION = "1.2.0"
     }
 
 }
