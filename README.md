@@ -31,6 +31,6 @@ This project is open source and we welcome updates from all devs.  Look to [`CON
     ```kotlin
     dependencies {
 	    ...
-	    implementation("com.github.BottleRocketStudios:Android-LaunchPad-Compose:0.2.0")
+	    implementation("com.github.BottleRocketStudios:Android-LaunchPad-Compose:0.3.0")
     }
     ```
