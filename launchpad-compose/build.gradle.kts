@@ -42,6 +42,7 @@ dependencies {
     kotlinDependencies()
     coroutineDependencies()
     composeDependencies()
+    accompanistDependencies()
 }
 
 afterEvaluate {
@@ -54,7 +55,7 @@ afterEvaluate {
 
                 groupId = "com.github.BottleRocketStudios"
                 artifactId = "Android-LaunchPad-Compose"
-                version = "0.2.0"
+                version = "0.3.0"
             }
         }
     }
