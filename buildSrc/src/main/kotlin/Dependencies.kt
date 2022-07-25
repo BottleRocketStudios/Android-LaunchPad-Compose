@@ -27,6 +27,20 @@ object Config {
     // TODO: First part of version should match version of kotlin - see https://github.com/google/ksp/blob/main/docs/faq.md
     const val KSP_VERSION = "1.6.10-1.0.2"
 
+    // Website info: https://detekt.github.io/detekt/index.html
+    // Rules:
+    //   https://detekt.github.io/detekt/comments.html
+    //   https://detekt.github.io/detekt/complexity.html
+    //   https://detekt.github.io/detekt/coroutines.html
+    //   https://detekt.github.io/detekt/empty-blocks.html
+    //   https://detekt.github.io/detekt/exceptions.html
+    //   https://detekt.github.io/detekt/formatting.html
+    //   https://detekt.github.io/detekt/naming.html
+    //   https://detekt.github.io/detekt/performance.html
+    //   https://detekt.github.io/detekt/style.html
+    // Release info: https://github.com/detekt/detekt/releases
+    const val DETEKT_VERSION = "1.19.0"
+
     /**
      * Called from root project buildscript block in the project root build.gradle.kts
      */
@@ -44,6 +58,7 @@ object Config {
     object ApplyPlugins {
         const val ANDROID_LIBRARY = "com.android.library"
         const val KT_LINT = "org.jlleitschuh.gradle.ktlint"
+        const val DETEKT = "io.gitlab.arturbosch.detekt"
         object Kotlin {
             const val ANDROID = "android"
         }
