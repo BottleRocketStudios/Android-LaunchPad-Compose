@@ -12,6 +12,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
+
+/**
+ * Sliding app bar
+ *
+ * @param visible - Controls visibility using sliding in/out animation
+ * @param title - same as TopAppBar
+ * @param modifier - same as TopAppBar
+ * @param navigationIcon - same as TopAppBar
+ * @param actions - same as TopAppBar
+ * @param backgroundColor - same as TopAppBar
+ * @param contentColor - same as TopAppBar
+ * @param elevation - same as TopAppBar
+ * @receiver
+ * @receiver
+ * @receiver
+ */
 @Composable
 fun SlidingAppBar(
     title: @Composable () -> Unit,
