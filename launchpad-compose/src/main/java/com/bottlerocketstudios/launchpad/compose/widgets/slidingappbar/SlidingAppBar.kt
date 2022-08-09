@@ -24,9 +24,6 @@ import androidx.compose.ui.unit.Dp
  * @param backgroundColor - same as TopAppBar
  * @param contentColor - same as TopAppBar
  * @param elevation - same as TopAppBar
- * @receiver
- * @receiver
- * @receiver
  */
 @Composable
 fun SlidingAppBar(
