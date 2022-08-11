@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
  */
 @Immutable
 interface ListDetailScope<T> {
-    val list: @Composable (List<T>, (T) -> Unit) -> Unit
+    val list: @Composable (List<T>) -> Unit
     val detail: @Composable (T?) -> Unit
     val detailStateCallback: (Boolean) -> Unit
     val selector: MutableSharedFlow<String?>
@@ -23,7 +23,7 @@ interface ListDetailScope<T> {
      * @param newList - Code block that accepts list of [T] and selected [T] to build list UI
      */
     @Composable
-    fun List(newList: @Composable (List<T>, (T) -> Unit) -> Unit)
+    fun List(newList: @Composable (List<T>) -> Unit)
 
     /**
      * Detail - DSL function for defining detail UI
@@ -52,7 +52,7 @@ interface ListDetailScope<T> {
 internal class ListDetailScopeImpl<T>(
     val items: List<T>
 ) : ListDetailScope<T> {
-    override var list: @Composable (List<T>, (T) -> Unit) -> Unit = { _, _ -> }
+    override var list: @Composable (List<T>) -> Unit = { _ -> }
         private set
 
     override var detail: @Composable (T?) -> Unit = {}
@@ -64,7 +64,7 @@ internal class ListDetailScopeImpl<T>(
     override val selector = MutableSharedFlow<String?>()
 
     @Composable
-    override fun List(newList: @Composable (List<T>, (T) -> Unit) -> Unit) {
+    override fun List(newList: @Composable (List<T>) -> Unit) {
         list = newList
     }
 

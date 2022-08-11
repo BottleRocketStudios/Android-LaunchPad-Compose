@@ -14,12 +14,10 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
-// Internal Graph Routes for use by this widget
-private object NavGraph {
-    sealed class Route(val route: String) {
-        object Detail : Route("detail/{selected}") {
-            fun navigateRoute(selected: String?) = "detail/$selected"
-        }
+// Internal  Routes for use by this widget
+internal sealed class Route(val route: String) {
+    object Detail : Route("detail/{selected}") {
+        fun navigateRoute(selected: String?) = "detail/$selected"
     }
 }
 
@@ -43,9 +41,9 @@ fun <T> AnimatedListDetail(
     val navController = rememberAnimatedNavController()
     val listDetailScope = ListDetailScopeImpl(list).apply { scope() }
 
-    AnimatedNavHost(navController = navController, startDestination = NavGraph.Route.Detail.route) {
+    AnimatedNavHost(navController = navController, startDestination = Route.Detail.route) {
         composable(
-            route = NavGraph.Route.Detail.route
+            route = Route.Detail.route
         ) { backStackEntry ->
             val selectedKey = backStackEntry.arguments?.getString("selected")
             val selected: T? = list.find { keyProvider(it) == selectedKey }
@@ -53,8 +51,8 @@ fun <T> AnimatedListDetail(
 
             // Use scoped selector to allow outside selection
             listDetailScope.selector.LaunchCollection { selectionKey ->
-                navController.navigate(route = NavGraph.Route.Detail.navigateRoute(selectionKey)) {
-                    popUpTo(NavGraph.Route.Detail.navigateRoute(null)) {
+                navController.navigate(route = Route.Detail.navigateRoute(selectionKey)) {
+                    popUpTo(Route.Detail.navigateRoute(null)) {
                         inclusive = true
                     }
                 }
@@ -67,14 +65,8 @@ fun <T> AnimatedListDetail(
                     selected?.also {
                         listDetailScope.detail(it)
                     } ?: run {
-                        // Show list with on select logic.
-                        listDetailScope.list(listDetailScope.items) { selection ->
-                            navController.navigate(route = NavGraph.Route.Detail.navigateRoute(keyProvider(selection))) {
-                                popUpTo(NavGraph.Route.Detail.navigateRoute(null)) {
-                                    inclusive = true
-                                }
-                            }
-                        }
+                        // Otherwise, show list
+                        listDetailScope.list(listDetailScope.items)
                     }
                 }
 
@@ -86,13 +78,7 @@ fun <T> AnimatedListDetail(
                 // On large screens, display both list and detail
                 Row(Modifier.fillMaxWidth()) {
                     Box(modifier = Modifier.weight(1f)) {
-                        listDetailScope.list(listDetailScope.items) { selection ->
-                            navController.navigate(route = NavGraph.Route.Detail.navigateRoute(keyProvider(selection))) {
-                                popUpTo(NavGraph.Route.Detail.route) {
-                                    inclusive = true
-                                }
-                            }
-                        }
+                        listDetailScope.list(listDetailScope.items)
                     }
                     Box(modifier = Modifier.weight(1f)) {
                         listDetailScope.detail(selected)
