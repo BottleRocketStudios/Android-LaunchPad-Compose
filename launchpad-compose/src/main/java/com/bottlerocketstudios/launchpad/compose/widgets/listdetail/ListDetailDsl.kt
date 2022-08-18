@@ -2,6 +2,7 @@ package com.bottlerocketstudios.launchpad.compose.widgets.listdetail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
  */
 @Immutable
 interface ListDetailScope<T> {
-    val list: @Composable (List<T>, (T) -> Unit) -> Unit
+    val list: @Composable (List<T>) -> Unit
     val detail: @Composable (T?) -> Unit
     val detailStateCallback: (Boolean) -> Unit
     val selector: MutableSharedFlow<String?>
@@ -23,7 +24,7 @@ interface ListDetailScope<T> {
      * @param newList - Code block that accepts list of [T] and selected [T] to build list UI
      */
     @Composable
-    fun List(newList: @Composable (List<T>, (T) -> Unit) -> Unit)
+    fun List(newList: @Composable (List<T>) -> Unit)
 
     /**
      * Detail - DSL function for defining detail UI
@@ -46,13 +47,13 @@ interface ListDetailScope<T> {
      *
      * @param - Key used by [AnimatedListDetail] to identify [T]
      */
-    suspend fun select(key: String?)
+    fun select(key: String?)
 }
 
 internal class ListDetailScopeImpl<T>(
     val items: List<T>
 ) : ListDetailScope<T> {
-    override var list: @Composable (List<T>, (T) -> Unit) -> Unit = { _, _ -> }
+    override var list: @Composable (List<T>) -> Unit = { _ -> }
         private set
 
     override var detail: @Composable (T?) -> Unit = {}
@@ -61,10 +62,13 @@ internal class ListDetailScopeImpl<T>(
     override var detailStateCallback: (Boolean) -> Unit = {}
         private set
 
-    override val selector = MutableSharedFlow<String?>()
+    override val selector = MutableSharedFlow<String?>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     @Composable
-    override fun List(newList: @Composable (List<T>, (T) -> Unit) -> Unit) {
+    override fun List(newList: @Composable (List<T>) -> Unit) {
         list = newList
     }
 
@@ -78,7 +82,7 @@ internal class ListDetailScopeImpl<T>(
         detailStateCallback = newDetailState
     }
 
-    override suspend fun select(key: String?) {
-        selector.emit(key)
+    override fun select(key: String?) {
+        selector.tryEmit(key)
     }
 }

@@ -14,12 +14,10 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
-// Internal Graph Routes for use by this widget
-private object NavGraph {
-    sealed class Route(val route: String) {
-        object Detail : Route("detail/{selected}") {
-            fun navigateRoute(selected: String?) = "detail/$selected"
-        }
+// Internal  Routes for use by this widget
+internal sealed class Route(val route: String) {
+    object Detail : Route("detail/{selected}") {
+        fun navigateRoute(selected: String?) = "detail/$selected"
     }
 }
 
@@ -43,9 +41,36 @@ fun <T> AnimatedListDetail(
     val navController = rememberAnimatedNavController()
     val listDetailScope = ListDetailScopeImpl(list).apply { scope() }
 
-    AnimatedNavHost(navController = navController, startDestination = NavGraph.Route.Detail.route) {
+    // UI for showing one screen at a time
+    @Composable
+    fun ListDetailScopeImpl<T>.singleScreen(selected: T?) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Show detail if item is selected
+            selected?.also {
+                detail(it)
+            } ?: run {
+                // Otherwise, show list
+                list(items)
+            }
+        }
+    }
+
+    // UI for large screens, display both list and detail
+    @Composable
+    fun ListDetailScopeImpl<T>.sideBySideScreens(selected: T?) {
+        Row(Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.weight(1f)) {
+                list(items)
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                detail(selected)
+            }
+        }
+    }
+
+    AnimatedNavHost(navController = navController, startDestination = Route.Detail.route) {
         composable(
-            route = NavGraph.Route.Detail.route
+            route = Route.Detail.route
         ) { backStackEntry ->
             val selectedKey = backStackEntry.arguments?.getString("selected")
             val selected: T? = list.find { keyProvider(it) == selectedKey }
@@ -53,51 +78,23 @@ fun <T> AnimatedListDetail(
 
             // Use scoped selector to allow outside selection
             listDetailScope.selector.LaunchCollection { selectionKey ->
-                navController.navigate(route = NavGraph.Route.Detail.navigateRoute(selectionKey)) {
-                    popUpTo(NavGraph.Route.Detail.navigateRoute(null)) {
+                navController.navigate(route = Route.Detail.navigateRoute(selectionKey)) {
+                    popUpTo(Route.Detail.navigateRoute(null)) {
                         inclusive = true
                     }
                 }
             }
 
-            // Switch on screen size
+            // Switch UI on screen size
             if (compactWidth) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    // Show detail if item is selected
-                    selected?.also {
-                        listDetailScope.detail(it)
-                    } ?: run {
-                        // Show list with on select logic.
-                        listDetailScope.list(listDetailScope.items) { selection ->
-                            navController.navigate(route = NavGraph.Route.Detail.navigateRoute(keyProvider(selection))) {
-                                popUpTo(NavGraph.Route.Detail.navigateRoute(null)) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-                }
+                listDetailScope.singleScreen(selected)
 
                 // Only intercept back presses if an item is selected. This allows outside nav host to handle backs.
                 BackHandler(selected != null) {
                     navController.popBackStack()
                 }
             } else {
-                // On large screens, display both list and detail
-                Row(Modifier.fillMaxWidth()) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        listDetailScope.list(listDetailScope.items) { selection ->
-                            navController.navigate(route = NavGraph.Route.Detail.navigateRoute(keyProvider(selection))) {
-                                popUpTo(NavGraph.Route.Detail.route) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    }
-                    Box(modifier = Modifier.weight(1f)) {
-                        listDetailScope.detail(selected)
-                    }
-                }
+                listDetailScope.sideBySideScreens(selected = selected)
             }
         }
     }
