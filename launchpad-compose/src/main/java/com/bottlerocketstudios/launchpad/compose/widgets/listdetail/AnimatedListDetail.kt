@@ -41,6 +41,33 @@ fun <T> AnimatedListDetail(
     val navController = rememberAnimatedNavController()
     val listDetailScope = ListDetailScopeImpl(list).apply { scope() }
 
+    // UI for showing one screen at a time
+    @Composable
+    fun ListDetailScopeImpl<T>.singleScreen(selected: T?) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Show detail if item is selected
+            selected?.also {
+                detail(it)
+            } ?: run {
+                // Otherwise, show list
+                list(items)
+            }
+        }
+    }
+
+    // UI for large screens, display both list and detail
+    @Composable
+    fun ListDetailScopeImpl<T>.sideBySideScreens(selected: T?) {
+        Row(Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.weight(1f)) {
+                list(items)
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                detail(selected)
+            }
+        }
+    }
+
     AnimatedNavHost(navController = navController, startDestination = Route.Detail.route) {
         composable(
             route = Route.Detail.route
@@ -58,32 +85,16 @@ fun <T> AnimatedListDetail(
                 }
             }
 
-            // Switch on screen size
+            // Switch UI on screen size
             if (compactWidth) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    // Show detail if item is selected
-                    selected?.also {
-                        listDetailScope.detail(it)
-                    } ?: run {
-                        // Otherwise, show list
-                        listDetailScope.list(listDetailScope.items)
-                    }
-                }
+                listDetailScope.singleScreen(selected)
 
                 // Only intercept back presses if an item is selected. This allows outside nav host to handle backs.
                 BackHandler(selected != null) {
                     navController.popBackStack()
                 }
             } else {
-                // On large screens, display both list and detail
-                Row(Modifier.fillMaxWidth()) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        listDetailScope.list(listDetailScope.items)
-                    }
-                    Box(modifier = Modifier.weight(1f)) {
-                        listDetailScope.detail(selected)
-                    }
-                }
+                listDetailScope.sideBySideScreens(selected = selected)
             }
         }
     }

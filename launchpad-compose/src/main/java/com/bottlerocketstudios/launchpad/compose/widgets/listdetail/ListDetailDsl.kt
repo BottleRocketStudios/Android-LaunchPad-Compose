@@ -2,6 +2,7 @@ package com.bottlerocketstudios.launchpad.compose.widgets.listdetail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
@@ -46,7 +47,7 @@ interface ListDetailScope<T> {
      *
      * @param - Key used by [AnimatedListDetail] to identify [T]
      */
-    suspend fun select(key: String?)
+    fun select(key: String?)
 }
 
 internal class ListDetailScopeImpl<T>(
@@ -61,7 +62,10 @@ internal class ListDetailScopeImpl<T>(
     override var detailStateCallback: (Boolean) -> Unit = {}
         private set
 
-    override val selector = MutableSharedFlow<String?>()
+    override val selector = MutableSharedFlow<String?>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     @Composable
     override fun List(newList: @Composable (List<T>) -> Unit) {
@@ -78,7 +82,7 @@ internal class ListDetailScopeImpl<T>(
         detailStateCallback = newDetailState
     }
 
-    override suspend fun select(key: String?) {
-        selector.emit(key)
+    override fun select(key: String?) {
+        selector.tryEmit(key)
     }
 }

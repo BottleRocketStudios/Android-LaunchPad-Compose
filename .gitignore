@@ -26,3 +26,4 @@ local.properties
 /launchpad-compose/.idea/codeStyles/Project.xml
 /launchpad-compose/.idea/workspace.xml
 /.idea/gradle.xml
+/.idea/compiler.xml
