@@ -55,7 +55,7 @@ afterEvaluate {
 
                 groupId = "com.github.BottleRocketStudios"
                 artifactId = "Android-LaunchPad-Compose"
-                version = "0.4.1"
+                version = "0.5.0"
             }
         }
     }
